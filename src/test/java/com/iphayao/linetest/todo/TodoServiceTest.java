@@ -223,5 +223,4 @@ public class TodoServiceTest {
         return String.format("task : %s : time e.g. %s : %s : ", type, action, date);
     }
 
-
 }

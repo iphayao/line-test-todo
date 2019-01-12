@@ -11,12 +11,17 @@ import com.linecorp.bot.spring.boot.annotation.EventMapping;
 import com.linecorp.bot.spring.boot.annotation.LineMessageHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
 
 import java.util.Optional;
 
 @Slf4j
 @LineMessageHandler
-public class TodoController {
+public class TodoBotController {
+    @Value("${app.edit-path}")
+    private String editPath;
+
     @Autowired
     private LineMessagingClient lineMessagingClient;
 
@@ -42,7 +47,7 @@ public class TodoController {
                 textMessage = String.format("Your todo id %s was created %s", todo.get().getId(), todo.get().toString());
             }
         } else if(method.equals("edit")) {
-            textMessage = "Edit Todo list";
+            textMessage = String.format(editPath, userId);
         } else {
             textMessage = message;
         }
