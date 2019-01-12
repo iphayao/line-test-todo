@@ -1,7 +1,9 @@
 package com.iphayao.linetest.todo;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,7 +14,9 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @Entity
-public class Todo {
+@AllArgsConstructor
+@NoArgsConstructor
+public class Todo implements Comparable<Todo> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
@@ -30,5 +34,10 @@ public class Todo {
                 ", date='" + dateTime + '\'' +
                 ", action='" + action + '\'' +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Todo o) {
+        return this.dateTime.compareTo(o.getDateTime());
     }
 }

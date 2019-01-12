@@ -1,5 +1,6 @@
 package com.iphayao.linetest.todo;
 
+import org.apache.logging.log4j.util.PropertySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -7,6 +8,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -60,7 +64,35 @@ public class TodoService {
                 .build();
     }
 
-    public void editTodo() {
-        return;
+    public List<Todo> retrieveTodoByUserId(String userId) {
+        List<Todo> todos = todoRepository.findByUserId(userId);
+        todos.sort(new Comparator<Todo>() {
+            @Override
+            public int compare(Todo a, Todo b) {
+                return a.getDateTime().compareTo(b.getDateTime());
+            }
+        });
+        return todos;
+    }
+
+    public Todo markTodoDone(int todoId) {
+        Optional<Todo> todo = todoRepository.findById(todoId);
+        if(todo.isPresent()) {
+            todo.get().setDone(true);
+            return todoRepository.save(todo.get());
+        }
+
+        return null;
+    }
+
+    public Todo editTodo(String userId, int todoId, Todo editTodo) {
+        Optional<Todo> todo = todoRepository.findById(todoId);
+        if(todo.isPresent()) {
+            editTodo.setUserId(userId);
+            editTodo.setId(todoId);
+            return todoRepository.save(editTodo);
+        }
+
+        return null;
     }
 }
