@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -17,8 +18,7 @@ public class Todo {
     private int id;
     private TodoType type;
     private String userId;
-    private String date;
-    private String time;
+    private LocalDateTime dateTime;
     private String action;
     private boolean done;
 
@@ -27,8 +27,7 @@ public class Todo {
         return "Todo{" +
                 "id=" + id +
                 ", type=" + type +
-                ", date='" + date + '\'' +
-                ", time='" + time + '\'' +
+                ", date='" + dateTime + '\'' +
                 ", action='" + action + '\'' +
                 '}';
     }
