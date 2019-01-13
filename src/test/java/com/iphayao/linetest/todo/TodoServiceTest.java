@@ -206,6 +206,23 @@ public class TodoServiceTest {
         assertTrue(result.isDone());
     }
 
+    @Test
+    public void testMarkTodoImportance() {
+        String userId = "123456789";
+        String expectAction = "Buy milk";
+        String expectDate = "2/5/18";
+        String expectTime = "13:00";
+
+        String message = formatTodoMessage("date/month/year", expectAction, expectDate, expectTime);
+
+        Todo todo = todoService.createTodo(userId, message).orElse(null);
+        assertFalse(Objects.requireNonNull(todo).isImportance()); // Make sure new create importance is false
+
+        Todo result = todoService.markTodoImportance(Objects.requireNonNull(todo).getId());
+
+        assertTrue(result.isImportance());
+    }
+
     private Todo getTodoMock(TodoType type, String userId, String expectAction, LocalDateTime expectDateTime) {
         return Todo.builder()
                 .type(type)

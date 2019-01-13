@@ -1,9 +1,11 @@
 package com.iphayao.linetest.todo;
 
 import org.apache.logging.log4j.util.PropertySource;
+import org.checkerframework.checker.nullness.Opt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -12,6 +14,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class TodoService {
@@ -61,11 +65,37 @@ public class TodoService {
                 .action(messages[2].substring(9).trim())
                 .dateTime(dateTime)
                 .done(false)
+                .importance(false)
                 .build();
     }
 
     public List<Todo> retrieveTodoByUserId(String userId) {
         List<Todo> todos = todoRepository.findByUserId(userId);
+        todos.sort(new Comparator<Todo>() {
+            @Override
+            public int compare(Todo a, Todo b) {
+                return a.getDateTime().compareTo(b.getDateTime());
+            }
+        });
+        return todos;
+    }
+
+    public Todo retrieveTodoByUserId(int id, String userId) {
+        return todoRepository.findByIdAndUserId(id, userId);
+    }
+
+    public List<Todo> retrieveTodoByUserIdImportance(String userId) {
+        List<Todo> todosImp = retrieveSortedTodoByUserIdImportance(userId, true);
+        List<Todo> todosNotImp = retrieveSortedTodoByUserIdImportance(userId, false);
+
+        return Stream.concat(todosImp.stream(), todosNotImp.stream())
+                .collect(Collectors.toList());
+
+    }
+
+
+    public List<Todo> retrieveSortedTodoByUserIdImportance(String id, boolean importance) {
+        List<Todo> todos = todoRepository.findByUserIdAndImportance(id, importance);
         todos.sort(new Comparator<Todo>() {
             @Override
             public int compare(Todo a, Todo b) {
@@ -81,7 +111,15 @@ public class TodoService {
             todo.get().setDone(true);
             return todoRepository.save(todo.get());
         }
+        return null;
+    }
 
+    public Todo markTodoImportance(int todoId) {
+        Optional<Todo> todo = todoRepository.findById(todoId);
+        if(todo.isPresent()) {
+            todo.get().setImportance(true);
+            return todoRepository.save(todo.get());
+        }
         return null;
     }
 
@@ -90,6 +128,7 @@ public class TodoService {
         if(todo.isPresent()) {
             editTodo.setUserId(userId);
             editTodo.setId(todoId);
+            editTodo.setType(todo.get().getType());
             return todoRepository.save(editTodo);
         }
 

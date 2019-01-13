@@ -8,28 +8,30 @@
 </head>
 <body>
     <div class="container-fluid">
-        <form action="#" th:action="@{/todo/save}" th:object="${form}" method="post">
             <fieldset>
                 <table class="table">
                     <thead>
                         <tr>
                             <th scope="col">Action</th>
                             <th scope="col">Date</th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:if="${todos.empty}">
-                            <td>No TODO items</td>
-                        </tr>
-                        <tr th:each="todo, item : ${todos}">
-                            <td><input th:value="${todo.action}" class="form-control form-control-sm"></input></td>
-                            <td><input th:value="${todo.dateTime}" class="form-control form-control-sm"></input></td>
+                        <tr th:each="todo, itemStat : ${todos}">
+                            <td>
+                                <span th:text="${todo.action}" />
+                                <span th:if="${todo.importance}" class="badge badge-primary">importance</span>
+                                <span th:if="${todo.done}" class="badge badge-success">Done</span>
+                            </td>
+                            <td><span th:text="${todo.dateTime}" /></td>
+                            <td>
+                                <a class="btn btn-light btn-sm" th:href="@{'/todos/edit/' + ${todo.id}}" role="button">Edit</a>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
-                <button type="submit" class="btn btn-primary mb-2">Edit</button>
             </fieldset>
-        </form>
     </div>
     <script type="text/javascript" th:scr="@{/js/bootstrap.min.js}"></script>
 

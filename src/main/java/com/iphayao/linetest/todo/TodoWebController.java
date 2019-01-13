@@ -3,11 +3,10 @@ package com.iphayao.linetest.todo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/todos")
@@ -15,15 +14,22 @@ public class TodoWebController {
     @Autowired
     TodoService todoService;
 
-    @GetMapping("/todos-edit")
-    public String editTodo(@RequestParam(value = "user", required = false) String userId, Model model) {
-        model.addAttribute("todos", todoService.retrieveTodoByUserId(userId));
+    @GetMapping("/edit")
+    public String editTodos(Principal principal, Model model) {
+        model.addAttribute("todos", todoService.retrieveTodoByUserIdImportance(principal.getName()));
         return "todosEdit";
     }
 
-    @GetMapping("/edit")
-    public String edit(Principal principal, Model model) {
-        model.addAttribute("todos", todoService.retrieveTodoByUserId(principal.getName()));
+    @GetMapping("/edit/{id}")
+    public String editTodosById(Principal principal, @PathVariable int id, Model model) {
+        model.addAttribute("todo", todoService.retrieveTodoByUserId(id, principal.getName()));
+        return "todoEdit";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String saveTodos(Principal principal, @PathVariable int id, @ModelAttribute Todo form, Model model) {
+        todoService.editTodo(principal.getName(), id, form);
+        model.addAttribute("todos", todoService.retrieveTodoByUserIdImportance(principal.getName()));
         return "todosEdit";
     }
 }

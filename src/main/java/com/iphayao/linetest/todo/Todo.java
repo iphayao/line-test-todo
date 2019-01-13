@@ -25,6 +25,7 @@ public class Todo implements Comparable<Todo> {
     private LocalDateTime dateTime;
     private String action;
     private boolean done;
+    private boolean importance;
 
     @Override
     public String toString() {
