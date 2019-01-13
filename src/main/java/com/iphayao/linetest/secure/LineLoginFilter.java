@@ -3,11 +3,13 @@ package com.iphayao.linetest.secure;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.iphayao.linetest.util.CommonUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.NullRememberMeServices;
 import org.springframework.security.web.authentication.RememberMeServices;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -23,6 +25,14 @@ import java.util.Objects;
 public class LineLoginFilter extends GenericFilterBean {
     private RememberMeServices rememberMeServices = new NullRememberMeServices();
 
+    private String clientId;
+    private String redirectUri;
+
+    public LineLoginFilter(String clientId, String redirectUri) {
+        this.clientId = clientId;
+        this.redirectUri = redirectUri;
+    }
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest)request;
@@ -31,9 +41,9 @@ public class LineLoginFilter extends GenericFilterBean {
         AccessToken accessToken = (AccessToken) httpRequest.getSession().getAttribute("ACCESS_TOKEN");
 
         if(accessToken == null) {
-            String callbackUrl = URLEncoder.encode("http://c25e9ee3.ngrok.io/auth", "UTF-8");
+            String callbackUrl = URLEncoder.encode(redirectUri, "UTF-8");
             String loginUrl = "https://access.line.me/oauth2/v2.1/authorize?response_type=code&"
-                    + "client_id=&"
+                    + "client_id=" + clientId + "&"
                     + "redirect_uri=" + callbackUrl + "&"
                     + "state=" + CommonUtils.getToken() + "&"
                     + "scope=openid";

@@ -2,6 +2,7 @@ package com.iphayao.linetest.secure;
 
 import com.sun.deploy.net.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -21,6 +22,13 @@ import java.util.Map;
 public class SecureController {
     private RestTemplate restTemplate = new RestTemplate();
 
+    @Value("${line.login.client-id}")
+    private String clientId;
+    @Value("${line.login.client-secret}")
+    private String clientSecret;
+    @Value("${line.login.redirect-uri}")
+    private String redirectUri;
+
     @GetMapping("/auth")
     public void authenticationHandle(@RequestParam("code") String code,
                                      @RequestParam("state") String state,
@@ -31,9 +39,9 @@ public class SecureController {
             MultiValueMap<String, String> bodyMap = new LinkedMultiValueMap<>();
             bodyMap.add("grant_type", "authorization_code");
             bodyMap.add("code", code);
-            bodyMap.add("redirect_uri", "http://c25e9ee3.ngrok.io/auth");
-            bodyMap.add("client_id", "");
-            bodyMap.add("client_secret", "");
+            bodyMap.add("redirect_uri", redirectUri);
+            bodyMap.add("client_id", clientId);
+            bodyMap.add("client_secret", clientSecret);
 
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
