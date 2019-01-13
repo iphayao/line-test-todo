@@ -47,7 +47,7 @@ public class TodoBotController {
                 textMessage = String.format("Your todo id %s was created %s", todo.get().getId(), todo.get().toString());
             }
         } else if(method.equals("edit")) {
-            textMessage = String.format(editPath, userId);
+            textMessage = editPath;
         } else {
             textMessage = message;
         }
