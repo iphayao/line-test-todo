@@ -18,9 +18,7 @@ public class SecureConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.antMatcher("/todos/*").authorizeRequests()
-                .anyRequest().authenticated()
-                .and().addFilterBefore(lineLoginFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAt(lineLoginFilter(), BasicAuthenticationFilter.class);
     }
 
     @Override
