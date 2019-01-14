@@ -36,7 +36,7 @@ public class TodoBotController {
     public void handleTextContent(String replyToken, Event event, TextMessageContent content) {
         String userId = event.getSource().getUserId();
         String message = content.getText();
-        String method = message.substring(0, 4);
+        String method = message.substring(0, 4).toLowerCase().trim();
 
         String textMessage = null;
 

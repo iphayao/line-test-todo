@@ -7,9 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -129,5 +127,40 @@ public class TodoService {
         }
 
         return null;
+    }
+
+    public Map<String, List<Todo>> groupTodoCompleted() {
+        List<Todo> todos = todoRepository.findByDoneFalseAndDateTimeBefore(LocalDateTime.now());
+        return groupTodoByUserId(markAllDone(todos));
+    }
+
+    private List<Todo> markAllDone(List<Todo> todos) {
+        for(Todo todo : todos) {
+            todo.setDone(true);
+        }
+        return todoRepository.saveAll(todos);
+    }
+
+    private Map<String, List<Todo>> groupTodoByUserId(List<Todo> todos) {
+        Map<String, List<Todo>> group = new HashMap<>();
+        for(Todo todo : todos) {
+            String userId = todo.getUserId();
+            if(group.isEmpty()) {
+                group.put(userId, getList(todo));
+            } else {
+                if(group.containsKey(userId)) {
+                    List<Todo> entry = group.get(userId);
+                    entry.add(todo);
+                    group.put(userId, entry);
+                } else {
+                    group.put(userId, getList(todo));
+                }
+            }
+        }
+        return group;
+    }
+
+    private LinkedList<Todo> getList(Todo todo) {
+        return new LinkedList<>(Collections.singletonList(todo));
     }
 }
