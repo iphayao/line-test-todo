@@ -1,5 +1,6 @@
 package com.iphayao.linetest.todo;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,13 @@ public class TodoServiceTest {
     @Autowired
     private TodoService todoService;
 
+    @Before
+    public void setUp() throws Exception {
+        repository.deleteAll();
+    }
+
     @Test
-    public void testCreateTodoByDateTypeWithDateTime() {
+    public void testCreateTodoByDateTypeWithDateTime() throws TodoItemDuplicateException {
         String userId = "123456789";
         String expectAction = "Buy milk";
         String expectDate = "2/5/18";
@@ -50,7 +56,7 @@ public class TodoServiceTest {
     }
 
     @Test
-    public void testCreateTodoByDateTypeWithDateNoTime() {
+    public void testCreateTodoByDateTypeWithDateNoTime() throws TodoItemDuplicateException {
         String userId = "123456789";
         String expectAction = "Buy milk";
         String expectDate = "2/5/18";
@@ -75,7 +81,7 @@ public class TodoServiceTest {
     }
 
     @Test
-    public void testCreateTodoTodayTypeWithDateTime() {
+    public void testCreateTodoTodayTypeWithDateTime() throws TodoItemDuplicateException {
         String userId = "123456789";
         String expectAction = "Finish writing shopping list";
         String expectDate = "today";
@@ -98,7 +104,7 @@ public class TodoServiceTest {
     }
 
     @Test
-    public void testCreateTodoTodayTypeWithDateNoTime() {
+    public void testCreateTodoTodayTypeWithDateNoTime() throws TodoItemDuplicateException {
         String userId = "123456789";
         String expectAction = "Finish writing shopping list";
         String expectDate = "today";
@@ -121,7 +127,7 @@ public class TodoServiceTest {
     }
 
     @Test
-    public void testCreateTodoTomorrowTypeWithDateTime() {
+    public void testCreateTodoTomorrowTypeWithDateTime() throws TodoItemDuplicateException {
         String userId = "123456789";
         String expectAction = "Finish writing shopping list";
         String expectDate = "tomorrow";
@@ -144,7 +150,7 @@ public class TodoServiceTest {
     }
 
     @Test
-    public void testCreateTodoTomorrowTypeWithDateNoTime() {
+    public void testCreateTodoTomorrowTypeWithDateNoTime() throws TodoItemDuplicateException {
         String userId = "123456789";
         String expectAction = "Finish writing shopping list";
         String expectDate = "tomorrow";
@@ -167,7 +173,7 @@ public class TodoServiceTest {
     }
 
     @Test
-    public void testRetrieveTodoByUserIdOrderAsAscending() {
+    public void testRetrieveTodoByUserIdOrderAsAscending() throws TodoItemDuplicateException {
         String userId = "123456789";
         String expectAction = "Buy milk";
 
@@ -178,7 +184,7 @@ public class TodoServiceTest {
             todoService.createTodo(userId, message);
         }
 
-        List<Todo> results = todoService.retrieveTodoByUserId(userId);
+        List<Todo> results = todoService.retrieveTodoByUserIdWithImportance(userId);
 
         assertEquals(5, results.size());
         assertEquals(1, results.get(0).getDateTime().getDayOfMonth());
@@ -190,7 +196,7 @@ public class TodoServiceTest {
     }
 
     @Test
-    public void testMarkTodoDone() {
+    public void testMarkTodoDone() throws TodoItemDuplicateException {
         String userId = "123456789";
         String expectAction = "Buy milk";
         String expectDate = "2/5/18";
@@ -207,7 +213,7 @@ public class TodoServiceTest {
     }
 
     @Test
-    public void testMarkTodoImportance() {
+    public void testMarkTodoImportance() throws TodoItemDuplicateException {
         String userId = "123456789";
         String expectAction = "Buy milk";
         String expectDate = "2/5/18";

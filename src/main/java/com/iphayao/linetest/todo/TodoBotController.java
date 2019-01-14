@@ -40,15 +40,19 @@ public class TodoBotController {
 
         String textMessage = null;
 
-        if(method.equals("task")) {
-            Optional<Todo> todo = todoService.createTodo(userId, message);
-            if(todo.isPresent()) {
-                textMessage = String.format("Your todo id %s was created %s", todo.get().getId(), todo.get().toString());
+        try {
+            if (method.equals("task")) {
+                Optional<Todo> todo = todoService.createTodo(userId, message);
+                if (todo.isPresent()) {
+                    textMessage = String.format("Your todo id %s was created %s", todo.get().getId(), todo.get().toString());
+                }
+            } else if (method.equals("edit")) {
+                textMessage = editPath;
+            } else {
+                textMessage = message;
             }
-        } else if(method.equals("edit")) {
-            textMessage = editPath;
-        } else {
-            textMessage = message;
+        } catch (TodoItemDuplicateException e) {
+            textMessage = "Your input task was duplicate.";
         }
 
         reply(replyToken, new TextMessage(textMessage));

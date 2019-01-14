@@ -4,6 +4,7 @@ spring:
 
 app:
   edit-path: 'Put Host Name Here'/todos/edit
+  cron-exp: 0 0 0,6 * * ?
 
 line.bot:
   channel-token: 'Put Channel Token Here.'

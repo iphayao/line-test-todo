@@ -16,8 +16,14 @@ public class TodoService {
     @Autowired
     private TodoRepository todoRepository;
 
-    public Optional<Todo> createTodo(String userId, String todoMessage) {
+    public Optional<Todo> createTodo(String userId, String todoMessage) throws TodoItemDuplicateException {
         Todo todo = extractTodoMessage(userId, todoMessage);
+
+        List<Todo> todos = todoRepository.findByUserIdAndTypeAndActionAndDateTime(
+                todo.getUserId(), todo.getType(), todo.getAction(), todo.getDateTime());
+        if(todos.size() > 0) {
+            throw new TodoItemDuplicateException();
+        }
 
         return Optional.of(todoRepository.save(todo));
     }
@@ -78,25 +84,13 @@ public class TodoService {
         return todoRepository.findByIdAndUserId(id, userId);
     }
 
-    public List<Todo> retrieveTodoByUserIdImportance(String userId) {
-        List<Todo> todosImp = retrieveSortedTodoByUserIdImportance(userId, true);
-        List<Todo> todosNotImp = retrieveSortedTodoByUserIdImportance(userId, false);
+    public List<Todo> retrieveTodoByUserIdWithImportance(String userId) {
+        List<Todo> todosImp = todoRepository.findByUserIdAndImportanceTrueOrderByDateTime(userId);
+        List<Todo> todosNotImp = todoRepository.findByUserIdAndImportanceFalseOrderByDateTime(userId);
 
         return Stream.concat(todosImp.stream(), todosNotImp.stream())
                 .collect(Collectors.toList());
 
-    }
-
-
-    public List<Todo> retrieveSortedTodoByUserIdImportance(String id, boolean importance) {
-        List<Todo> todos = todoRepository.findByUserIdAndImportance(id, importance);
-        todos.sort(new Comparator<Todo>() {
-            @Override
-            public int compare(Todo a, Todo b) {
-                return a.getDateTime().compareTo(b.getDateTime());
-            }
-        });
-        return todos;
     }
 
     public Todo markTodoDone(int todoId) {
@@ -130,15 +124,8 @@ public class TodoService {
     }
 
     public Map<String, List<Todo>> groupTodoCompleted() {
-        List<Todo> todos = todoRepository.findByDoneFalseAndDateTimeBefore(LocalDateTime.now());
-        return groupTodoByUserId(markAllDone(todos));
-    }
-
-    private List<Todo> markAllDone(List<Todo> todos) {
-        for(Todo todo : todos) {
-            todo.setDone(true);
-        }
-        return todoRepository.saveAll(todos);
+        List<Todo> todos = todoRepository.findByDoneTrueAndDateTimeBefore(LocalDateTime.now());
+        return groupTodoByUserId(todos);
     }
 
     private Map<String, List<Todo>> groupTodoByUserId(List<Todo> todos) {

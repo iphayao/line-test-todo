@@ -15,7 +15,7 @@ public class TodoWebController {
 
     @GetMapping("/edit")
     public String editTodos(Principal principal, Model model) {
-        model.addAttribute("todos", todoService.retrieveTodoByUserIdImportance(principal.getName()));
+        model.addAttribute("todos", todoService.retrieveTodoByUserIdWithImportance(principal.getName()));
         return "todosEdit";
     }
 
@@ -28,7 +28,7 @@ public class TodoWebController {
     @PostMapping("/edit/{id}")
     public String saveTodos(Principal principal, @PathVariable int id, @ModelAttribute Todo form, Model model) {
         todoService.editTodo(principal.getName(), id, form);
-        model.addAttribute("todos", todoService.retrieveTodoByUserIdImportance(principal.getName()));
+        model.addAttribute("todos", todoService.retrieveTodoByUserIdWithImportance(principal.getName()));
         return "todosEdit";
     }
 }

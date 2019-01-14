@@ -19,7 +19,7 @@ public class TodoSchedule {
     @Autowired
     private TodoService todoService;
 
-    @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "${app.cron-exp}")
     public void handleSummary() {
         Map<String, List<Todo>> todoCompleted = todoService.groupTodoCompleted();
 
