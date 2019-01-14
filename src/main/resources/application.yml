@@ -3,14 +3,14 @@ spring:
     cache: false
 
 app:
-  edit-path: http://b1665889.ngrok.io/todos/edit
+  edit-path: 'Put Host Name Here'/todos/edit
 
 line.bot:
   channel-token: 'Put Channel Token Here.'
-  channel-secret: 'Put Channel Token Here.'
+  channel-secret: 'Put Channel Secret Here.'
   handle-path: /callback
 
 line.login:
-  client_id: 'Put Channel Token Here.'
-  client_secret: 'Put Channel Token Here.'
-  redirect_uri: http://b1665889.ngrok.io/auth
+  client_id: 'Put Channel Client ID Here.'
+  client_secret: 'Put Channel Client Secret Here.'
+  redirect_uri: 'Put Host Name Here'/auth
