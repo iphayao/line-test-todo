@@ -14,6 +14,22 @@ line.bot:
   handle-path: /callback
 ```
 
+Replace `client_id`, `client_secret` and `redirect_uri` as host name of Bot's callback path or host that running this application.
+
+```
+line.login:
+  client_id: 'Put Channel Client ID Here.'
+  client_secret: 'Put Channel Client Secret Here.'
+  redirect_uri: 'Put Host Name Here'/auth
+```
+
+Replace `edit-pat` as host name of Bot's callback path or host that running this application.
+
+```
+app:
+  edit-path: 'Put Host Name Here'/todos/edit
+```
+
 ### Run Spring Boot
 To run application in your local machine use this command, it will compile, test and start this application.
 
